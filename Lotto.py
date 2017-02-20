@@ -42,7 +42,7 @@ def number_ranges(lotto_db):
             num_ranges[str(i)]['min'] = min(num_ranges[str(i)]['min'], int(row[str(i)]))
             num_ranges[str(i)]['max'] = max(num_ranges[str(i)]['max'], int(row[str(i)]))
             num_ranges[str(i)]['list'].append(int(row[str(i)]))
-        num_ranges[str(i)]['avg'] = sum(num_ranges[str(i)]['list'])/float(len(num_ranges[str(i)]['list']))
+        num_ranges[str(i)]['avg'] = sum(num_ranges[str(i)]['list'])/len(num_ranges[str(i)]['list'])
     return num_ranges
 
 def dump_db(lotto_db):
@@ -53,15 +53,19 @@ def generate_results(res_num):
     random.seed()
     result = {}
     for j in range(1, res_num):
-        result[str(j)] = []
+        result[str(j)] = {}
+        result[str(j)]['list'] = []
         for i in range(1, 7):
             candidate = number_ranges(lotto_db)[str(i)]['list'][
                 random.randint(1, len(number_ranges(lotto_db)[str(i)]['list']))]
-            while candidate  in result[str(j)]:
+            while candidate  in result[str(j)]['list']:
                 candidate = number_ranges(lotto_db)[str(i)]['list'][
                     random.randint(1, len(number_ranges(lotto_db)[str(i)]['list']))]
-            result[str(j)].append(candidate)
-        print sorted(result[str(j)])
+            result[str(j)]['list'].append(candidate)
+        result[str(j)]['list'] = sorted(result[str(j)]['list'])
+        result[str(j)]['sum'] = sum(result[str(j)]['list'])
+        result[str(j)]['avg'] = result[str(j)]['sum'] / len(result[str(j)]['list'])
+        print result[str(j)]
     return result
 
 def generate_probability_results(res_num):
@@ -72,13 +76,17 @@ def generate_probability_results(res_num):
         plist += [item for item in number_ranges(lotto_db)[str(i)]['list']]
 
     for j in range(1, res_num):
-        result[str(j)] = []
+        result[str(j)] = {}
+        result[str(j)]['list'] = []
         for i in range(1, 7):
             candidate = plist[random.randint(1, len(plist))]
-            while candidate in result[str(j)]:
+            while candidate in result[str(j)]['list']:
                 candidate = plist[random.randint(1, len(plist))]
-            result[str(j)].append(candidate)
-        print sorted(result[str(j)])
+            result[str(j)]['list'].append(candidate)
+        result[str(j)]['list'] = sorted(result[str(j)]['list'])
+        result[str(j)]['sum'] = sum(result[str(j)]['list'])
+        result[str(j)]['avg'] = result[str(j)]['sum']/len(result[str(j)]['list'])
+        print result[str(j)]
     return result
 
 read_lotto_file()
@@ -89,6 +97,7 @@ dump_db(lotto_db)
 print number_ranges(lotto_db)
 res = generate_results(100)
 pres = generate_probability_results(100)
+
 
 
 
