@@ -47,7 +47,8 @@ def number_ranges(lotto_db):
 
 def dump_db(lotto_db):
     for row in lotto_db:
-        print row['Game'],row['Date'],row['1'],row['2'],row['3'],row['4'],row['5'],row['6'],row['Additional number']
+        #if (int(row['1'])>37 or int(row['2'])>37 or int(row['3'])>37 or int(row['4'])>37 or int(row['5'])>37 or int(row['6'])>37):
+        print row['Game'],row['Date'],row['1'],row['2'],row['3'],row['4'],row['5'],row['6'],row['Additional number'],row['sum']
 
 def generate_results(res_num):
     random.seed()
@@ -89,15 +90,30 @@ def generate_probability_results(res_num):
         print result[str(j)]
     return result
 
+def sum_probability(lotto_db):
+    prob_sum = {}
+    for row in lotto_db:
+        if prob_sum.get(str(row['sum'])):
+            prob_sum[str(row['sum'])] += 1
+        else:
+            prob_sum[str(row['sum'])] = 1
+    print sorted(prob_sum, key=prob_sum.get, reverse=True)
+
 read_lotto_file()
-most_recent_number(lotto_db=lotto_db)
+print most_recent_number(lotto_db=lotto_db)
 add_row_sum(lotto_db)
 add_row_average(lotto_db)
 dump_db(lotto_db)
-print number_ranges(lotto_db)
-res = generate_results(100)
-pres = generate_probability_results(100)
+sum_probability(lotto_db)
+#print number_ranges(lotto_db)
+#res = generate_results(100)
+#pres = generate_probability_results(100)
+#my_set = set()
+#for i in range(1,7):
+#    my_set.add(lotto_db[0][str(i)])
 
+#for i in range(1,100):
+#    print set(res[str(i)]['list']).intersection(set(pres[str(i)]['list']))
 
 
 
