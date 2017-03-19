@@ -161,13 +161,16 @@ sum_probability(lotto_db)
 
 final_results = []
 ranges = number_ranges(lotto_db)
+lotto_list = [row['numbers'] for row in lotto_db]
+summary_list = sorted(sum_probability(lotto_db), key=sum_probability(lotto_db).get, reverse=True)
 while len(final_results) < 10:
     result = generate_results(ranges)
-    if two_following(result['list']) and result['Additional number'] < 81:
+    if two_following(result['list']) and result['Additional number'] < 8:
         if in_last(result['list'], lotto_db):
-            if str(result['sum']) in ['105', '111', '97', '116', '100', '117', '114', '113', '104', '98']:
-                final_results.append(result)
-                print result
+            if str(result['sum']) in summary_list[0:10]:
+                if result['list'] not in lotto_list and result not in final_results:
+                    final_results.append(result)
+                    print result
 
 
 
