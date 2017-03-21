@@ -151,10 +151,23 @@ def calculate_in_last(lotto_db):
         last = row
     return count
 
+#calculate most most recent
+def find_less_most_number_value():
+    most_recent = most_recent_number(lotto_db=lotto_db)
+    count=400
+    for row in lotto_db:
+        mid_most = 0
+        for i in range(1,7):
+            if mid_most < most_recent[row[str(i)]]:
+                mid_most = most_recent[row[str(i)]]
+        if count > mid_most:
+            count = mid_most
+    return count
 
 # Preparations
 read_lotto_file()
-print most_recent_number(lotto_db=lotto_db)
+most_recent = most_recent_number(lotto_db=lotto_db)
+sorted_most_recent = sorted(most_recent, key=most_recent.get, reverse=True)
 # dump_db(lotto_db)
 sum_probability(lotto_db)
 
