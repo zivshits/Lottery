@@ -96,7 +96,6 @@ def sum_probability(lotto_db):
             prob_sum[str(row['sum'])] += 1
         else:
             prob_sum[str(row['sum'])] = 1
-    print sorted(prob_sum, key=prob_sum.get, reverse=True)
     return prob_sum
 
 # Returns normal distribution of sums
@@ -151,7 +150,7 @@ def calculate_in_last(lotto_db):
         last = row
     return count
 
-#calculate most most recent
+#calculate less most recent number
 def find_less_most_number_value():
     most_recent = most_recent_number(lotto_db=lotto_db)
     count=400
@@ -164,13 +163,32 @@ def find_less_most_number_value():
             count = mid_most
     return count
 
+def find_most_less_recent_number_index():
+    most_recent = most_recent_number(lotto_db=lotto_db)
+    count = 0
+    for row in lotto_db:
+        mid_most = 400
+        for i in range(1, 7):
+            if mid_most > most_recent[row[str(i)]]:
+                mid_most = most_recent[row[str(i)]]
+        if count < mid_most:
+            count = mid_most
+    return count
+
+# Check if has most recent number in the list
+def has_most_recent_number(numbers):
+    less_most_recent_index = find_less_most_number_value()
+    most_recent = most_recent_number(lotto_db=lotto_db)
+    for number in numbers:
+        if most_recent[str(number)] > less_most_recent_index:
+            return True
+    return False
+
+
 # Preparations
 read_lotto_file()
-most_recent = most_recent_number(lotto_db=lotto_db)
-sorted_most_recent = sorted(most_recent, key=most_recent.get, reverse=True)
-# dump_db(lotto_db)
-sum_probability(lotto_db)
 
+print find_most_less_recent_number_index()
 
 final_results = []
 ranges = number_ranges(lotto_db)
@@ -180,14 +198,8 @@ while len(final_results) < 10:
     result = generate_results(ranges)
     if two_following(result['list']) and result['Additional number'] < 8:
         if in_last(result['list'], lotto_db):
-            if str(result['sum']) in summary_list[0:10]:
-                if result['list'] not in lotto_list and result not in final_results:
-                    final_results.append(result)
-                    print result
-
-
-
-
-
-
-
+            if has_most_recent_number(result['list']):
+                if str(result['sum']) in summary_list[0:5]:
+                    if result['list'] not in lotto_list and result not in final_results:
+                        final_results.append(result)
+                        print len(final_results), result
