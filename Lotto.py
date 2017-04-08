@@ -1,5 +1,6 @@
 import csv
 import random
+import numpy
 lotto_db = []
 numbers = {}
 
@@ -198,6 +199,26 @@ def find_number_of_most_numbers():
     for row in lotto_db:
         slots[str(has_most_recent_number(row['numbers']))] += 1
     return slots
+
+def number_pattern(lotto_db):
+    numbers = {}
+    for row in lotto_db:
+        for i in range(1, 7):
+            if row[str(i)] not in numbers:
+                 numbers[row[str(i)]] = {'games':[], 'pattern':[]}
+            numbers[row[str(i)]]['games'].append(row['Game'])
+    for num in numbers:
+        last_game = lotto_db[0]['Game']
+        for game in numbers[num]['games']:
+            numbers[num]['pattern'].append(int(last_game) - int(game))
+            last_game = game
+        numbers[num]['pattern_avg'] = numpy.mean(numbers[num]['pattern'])
+        print num, numbers[num]
+    return numbers
+
+
+numbers = number_pattern(lotto_db)
+
 
 final_results = []
 ranges = number_ranges(lotto_db)
