@@ -1,6 +1,7 @@
 import csv
 import random
-lotto_db = [];
+lotto_db = []
+numbers = {}
 
 # Reads data from Israeli Lottery csv file, parses it and calculates sum and average
 def read_lotto_file(depth=-1):
@@ -19,7 +20,7 @@ def read_lotto_file(depth=-1):
 def dump_db(lotto_db):
     for row in lotto_db:
          # if (int(row['1'])>37 or int(row['2'])>37 or int(row['3'])>37 or int(row['4'])>37 or int(row['5'])>37 or int(row['6'])>37):
-         print row['Game'], row['Date'], row['numbers'], row['Additional number'], row['sum']
+         print row['Game'], row['Date'], row['numbers'], row['Additional number'], row['sum'], row['fullsum']
 
 # Returns a list of most recent numbers order
 def most_recent_number(lotto_db):
@@ -35,13 +36,13 @@ def most_recent_number(lotto_db):
 
 # Returns a list of numbers per colomn
 def number_ranges(lotto_db):
-    num_ranges = {};
+    num_ranges = {}
     num_ranges['Additional number'] = [int(row['Additional number']) for row in lotto_db]
     for i in range(1,7):
-        num_ranges[str(i)] = {};
-        num_ranges[str(i)]['min']=99;
-        num_ranges[str(i)]['max']=0;
-        num_ranges[str(i)]['list']=[];
+        num_ranges[str(i)] = {}
+        num_ranges[str(i)]['min']=99
+        num_ranges[str(i)]['max']=0
+        num_ranges[str(i)]['list']=[]
         for row in lotto_db:
             num_ranges[str(i)]['min'] = min(num_ranges[str(i)]['min'], int(row[str(i)]))
             num_ranges[str(i)]['max'] = max(num_ranges[str(i)]['max'], int(row[str(i)]))
@@ -125,10 +126,11 @@ def two_following(numbers):
 
 # Finds if numbers exists in the last lotto results
 def in_last(numbers, lotto_db):
+    count = 0
     for num in numbers:
         if num in lotto_db[0]['numbers']:
-            return True
-    return False
+            count += 1
+    return count
 
 # Returns number of 2 following numbers in the lottery
 def calculate_two_following(lotto_db):
@@ -177,28 +179,44 @@ def find_most_less_recent_number_index():
 
 # Check if has most recent number in the list
 def has_most_recent_number(numbers):
+    count = 0
     less_most_recent_index = find_less_most_number_value()
     most_recent = most_recent_number(lotto_db=lotto_db)
     for number in numbers:
         if most_recent[str(number)] > less_most_recent_index:
-            return True
-    return False
+            count += 1
+    return count
 
 
 # Preparations
 read_lotto_file()
 
-print find_most_less_recent_number_index()
+#print find_most_less_recent_number_index()
+
+def find_number_of_most_numbers():
+    slots = {'0':0, '1':0, '2':0, '3':0, '4':0, '5':0, '6':0}
+    for row in lotto_db:
+        slots[str(has_most_recent_number(row['numbers']))] += 1
+    return slots
 
 final_results = []
 ranges = number_ranges(lotto_db)
 lotto_list = [row['numbers'] for row in lotto_db]
 summary_list = sorted(sum_probability(lotto_db), key=sum_probability(lotto_db).get, reverse=True)
+print "Main statistics"
+print "==============================="
+#print "Less most recent number index: "+str(find_less_most_number_value())
+print "Ordered summary list: "+ str(summary_list)
+#print "Number of most recent numbers: " + str(find_number_of_most_numbers())
+print "Most recent numbers: " + str(sorted(most_recent_number(lotto_db), key=most_recent_number(lotto_db).get, reverse=True))
+#print most_recent_number(lotto_db)
+print "==============================="
+print "Lotto results:"
 while len(final_results) < 10:
     result = generate_results(ranges)
     if two_following(result['list']) and result['Additional number'] < 8:
-        if in_last(result['list'], lotto_db):
-            if has_most_recent_number(result['list']):
+        if in_last(result['list'], lotto_db) == 2:
+            if has_most_recent_number(result['list']) == 4:
                 if str(result['sum']) in summary_list[0:5]:
                     if result['list'] not in lotto_list and result not in final_results:
                         final_results.append(result)
