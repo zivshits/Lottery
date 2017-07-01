@@ -16,6 +16,7 @@ def read_lotto_file(depth=-1):
             row['average'] = row['sum'] / 6
             row['fullavg'] = row['fullsum'] / 7
             lotto_db.append(row)
+            print row['Game'], row['Date'], row['numbers'], row['Additional number'], row['sum'], row['fullsum']
 
 # Prints database
 def dump_db(lotto_db):
@@ -213,12 +214,21 @@ def number_pattern(lotto_db):
             numbers[num]['pattern'].append(int(last_game) - int(game))
             last_game = game
         numbers[num]['pattern_avg'] = numpy.mean(numbers[num]['pattern'])
+        numbers[num]['last_before'] = numbers[num]['pattern'][0]
         print num, numbers[num]
     return numbers
 
 
-numbers = number_pattern(lotto_db)
+#numbers = number_pattern(lotto_db)
+#def patterns_generate_results(lotto_db):
+#    patterns = number_pattern(lotto_db)
+#    appear = []
+#    for pattern in patterns:
+#        for patterns[pattern].appear[pattern]:
 
+
+
+#patterns_generate_results(lotto_db)
 
 final_results = []
 ranges = number_ranges(lotto_db)
