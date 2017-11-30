@@ -1,6 +1,5 @@
 import csv
 import random
-import numpy
 lotto_db = []
 numbers = {}
 
@@ -16,13 +15,13 @@ def read_lotto_file(depth=-1):
             row['average'] = row['sum'] / 6
             row['fullavg'] = row['fullsum'] / 7
             lotto_db.append(row)
-            print row['Game'], row['Date'], row['numbers'], row['Additional number'], row['sum'], row['fullsum']
+            print(row['Game'], row['Date'], row['numbers'], row['Additional number'], row['sum'], row['fullsum'])
 
 # Prints database
 def dump_db(lotto_db):
     for row in lotto_db:
          # if (int(row['1'])>37 or int(row['2'])>37 or int(row['3'])>37 or int(row['4'])>37 or int(row['5'])>37 or int(row['6'])>37):
-         print row['Game'], row['Date'], row['numbers'], row['Additional number'], row['sum'], row['fullsum']
+         print(row['Game'], row['Date'], row['numbers'], row['Additional number'], row['sum'], row['fullsum'])
 
 # Returns a list of most recent numbers order
 def most_recent_number(lotto_db):
@@ -88,7 +87,7 @@ def generate_probability_results(res_num):
         result[str(j)]['list'] = sorted(result[str(j)]['list'])
         result[str(j)]['sum'] = sum(result[str(j)]['list'])
         result[str(j)]['avg'] = result[str(j)]['sum']/len(result[str(j)]['list'])
-        print result[str(j)]
+        print(result[str(j)])
     return result
 
 # Returns list of sum by probability (desc)
@@ -116,7 +115,7 @@ def normal_sum_dist():
                                 else:
                                     avg_sum[str(n1+n2+n3+n4+n5+n6)] = 1
                                 #print n1, n2, n3, n4, n5, n6, str(n1+n2+n3+n4+n5+n6)
-    print sorted(avg_sum, key=avg_sum.get, reverse=True)
+    print(sorted(avg_sum, key=avg_sum.get, reverse=True))
 
 # Finds if there are 2 following numbers (1,2 or 11,12)
 def two_following(numbers):
@@ -139,7 +138,7 @@ def calculate_two_following(lotto_db):
     count = 0
     for row in lotto_db:
         if two_following(row['numbers']):
-            print row['numbers']
+            print(row['numbers'])
             count += 1
     return count
 
@@ -215,7 +214,7 @@ def number_pattern(lotto_db):
             last_game = game
         numbers[num]['pattern_avg'] = numpy.mean(numbers[num]['pattern'])
         numbers[num]['last_before'] = numbers[num]['pattern'][0]
-        print num, numbers[num]
+        print(num, numbers[num])
     return numbers
 
 
@@ -234,15 +233,15 @@ final_results = []
 ranges = number_ranges(lotto_db)
 lotto_list = [row['numbers'] for row in lotto_db]
 summary_list = sorted(sum_probability(lotto_db), key=sum_probability(lotto_db).get, reverse=True)
-print "Main statistics"
-print "==============================="
+print("Main statistics")
+print("===============================")
 #print "Less most recent number index: "+str(find_less_most_number_value())
-print "Ordered summary list: "+ str(summary_list)
+print("Ordered summary list: "+ str(summary_list))
 #print "Number of most recent numbers: " + str(find_number_of_most_numbers())
-print "Most recent numbers: " + str(sorted(most_recent_number(lotto_db), key=most_recent_number(lotto_db).get, reverse=True))
+print("Most recent numbers: " + str(sorted(most_recent_number(lotto_db), key=most_recent_number(lotto_db).get, reverse=True)))
 #print most_recent_number(lotto_db)
-print "==============================="
-print "Lotto results:"
+print("===============================")
+print("Lotto results:")
 while len(final_results) < 10:
     result = generate_results(ranges)
     if two_following(result['list']) and result['Additional number'] < 8:
@@ -251,4 +250,4 @@ while len(final_results) < 10:
                 if str(result['sum']) in summary_list[0:5]:
                     if result['list'] not in lotto_list and result not in final_results:
                         final_results.append(result)
-                        print len(final_results), result
+                        print(len(final_results), result)
